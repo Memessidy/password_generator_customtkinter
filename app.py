@@ -4,6 +4,7 @@ import pyperclip
 from PIL import Image
 import os
 import sys
+from tkinter import messagebox
 
 if getattr(sys, 'frozen', False):
     # Running in a PyInstaller bundle
@@ -64,8 +65,8 @@ class App(customtkinter.CTk):
         super().__init__()
 
         self.title("Password generator app")
-        self.geometry("570x330")
-        self.resizable(True, False)
+        self.geometry("620x330")
+        self.resizable(False, False)
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=1)
         self.values = ["0-9", "a-z", "A-Z", "@#$%", "Startswith letter"]
@@ -77,6 +78,7 @@ class App(customtkinter.CTk):
 
         self.checkbox_frame_1 = SettingsFrame(self, values=self.values,
                                               title="Settings")
+
         self.checkbox_frame_1.grid(row=1, column=0, padx=10, pady=(10, 0), sticky="wnes")
 
         self.button = customtkinter.CTkButton(self, text="Generate password", command=self.button_callback)
@@ -85,8 +87,20 @@ class App(customtkinter.CTk):
         self.button2 = customtkinter.CTkButton(self, text="Copy password to clipboard", command=self.copy_password)
         self.button2.grid(row=3, column=0, padx=10, pady=3, sticky="ew")
 
+        # self.checkbox_frame_1.password_length_entry.
+
     def button_callback(self):
         values = self.checkbox_frame_1.get()
+        length_of_password = int(self.checkbox_frame_1.password_length_entry.get())
+        if length_of_password > 1000:
+            messagebox.showerror("warning", "Password length must be < 1000")
+            return
+        else:
+            if length_of_password <= 100:
+                self.checkbox_frame_1.password_length_slider.set(length_of_password)
+            else:
+                self.checkbox_frame_1.password_length_slider.set(100)
+
         password = create_new(length=int(self.checkbox_frame_1.password_length_entry.get()),
                               values=values)
         self.checkbox_frame_1.password_field.delete(0, "end")
@@ -105,6 +119,8 @@ class App(customtkinter.CTk):
 
 def main():
     app = App()
+    # app.minsize(width=530, height=300)
+    # app.maxsize(width=700, height=700)
     app.mainloop()
 
 
