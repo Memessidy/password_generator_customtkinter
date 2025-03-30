@@ -3,9 +3,6 @@ import random
 
 
 def create_new(length: int, values: list) -> str:
-    result = ""
-    char = ""
-
     if not values or (len(values) == 1 and 'Startswith letter' in values):
         return ""
 
@@ -14,19 +11,23 @@ def create_new(length: int, values: list) -> str:
         'a-z': ascii_lowercase,
         'A-Z': ascii_uppercase,
         '@#$%': punctuation,
-        'Startswith letter': ''
     }
 
-    possible_values = ''
-    for value in values:
-        possible_values += ''.join(characters_dict[value])
+    char_groups = [characters_dict[v] for v in values if v in characters_dict]
+
+    if not char_groups:
+        return ""
 
     if "Startswith letter" in values:
-        char = random.choice(characters_dict['a-z'])
+        first_char = random.choice(ascii_lowercase)
         length -= 1
+    else:
+        first_char = ""
 
-    for _ in range(length):
-        result += ''.join(random.choice(possible_values))
+    password_chars = [random.choice(group) for group in char_groups]
 
-    result = char + result
-    return result
+    all_chars = "".join(char_groups)
+    password_chars += random.choices(all_chars, k=length - len(password_chars))
+
+    random.shuffle(password_chars)
+    return first_char + "".join(password_chars)
