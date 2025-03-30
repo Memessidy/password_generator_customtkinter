@@ -28,16 +28,18 @@ echo Command running: !command!
 echo Waiting for PyInstaller to finish...
 timeout /t 3 /nobreak >nul
 
+if exist builded (
+    echo Deleting existing builded folder...
+    rmdir /s /q builded
+)
 if exist dist (
     echo Renaming dist to builded...
     rename dist builded
 )
-
 if exist build (
     echo Deleting build folder...
     rmdir /s /q build
 )
-
 if exist app.spec (
     echo Deleting app.spec...
     del app.spec
